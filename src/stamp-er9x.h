@@ -3,4 +3,4 @@
 #define TIME_STR "20:09:17"
 #define SUB_VERS 2439-Mike
 #define SVN_VERS "er9x-r816"
-#define MOD_VERS "FRSKY NT    "
+#define MOD_VERS "  "

@@ -431,7 +431,7 @@ const prog_char APM s_charTab[]=" ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrst
 #define SCROLL_TH 64
 #define INACTIVITY_THRESHOLD 256
 #define THRCHK_DEADBAND 16
-#define SPLASH_TIMEOUT  (4*100)  //400 msec - 4 seconds
+#define SPLASH_TIMEOUT  (1*100)  //400 msec - 4 seconds
 
 #ifdef FIX_MODE
 #define IS_THROTTLE(x)  ((x) == 2) // (((2-(g_eeGeneral.stickMode&1)) == x) && (x<4))
@@ -474,9 +474,10 @@ uint8_t IS_EXPO_THROTTLE( uint8_t x ) ;
 #define PROTO_PXX        1
 #define PROTO_DSM2       2
 #define PROTO_PPM16	     3
-#define PROTO_PPMSIM     4		// Always make this the last protocol
-#define PROT_MAX         4
-#define PROT_STR "\006PPM   PXX   DSM2  PPM16 PPMSIM"
+#define PROTO_PPMSIM     5		// Always make this the last protocol
+#define PROTO_NRF	     4
+#define PROT_MAX         5
+#define PROT_STR "\006PPM   PXX   DSM2  PPM16 NRF   PPMSIM"
 //#define PROT_STR_LEN     6
 #define DSM2_STR "\011LP4/LP5  DSM2only DSM2/DSMX"
 //#define DSM2_STR_LEN     9

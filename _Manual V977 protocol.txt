@@ -1,0 +1,45 @@
+1.)take er9x sources
+
+2.)add to src folder: kn_nrf24l01.c + nrf24l01.c + nrf24l01.h + spi.cpp + spi.h
+
+3.)
+->in lcd.h
+ #define LCD_NOMCONTRAST 33
+
+->in er9x.h
+#define PROTO_NONE       0xFF
+#define PROTO_PPM        0
+#define PROTO_PXX        1
+#define PROTO_DSM2       2
+#define PROTO_PPM16	 3
+#define PROTO_PPMSIM     4		// Always make this the last protocol
+
+#define PROT_MAX         4
+#define PROT_STR "\006PPM   PXX   DSM2  PPM16 PPMSIM"
+
+->in splashmarker.h
+#ifndef SPLASHMARKER_H
+#define SPLASHMARKER_H
+
+// this string is used to find the splash screen bitmap.
+// the bitmap should follow this string and be 128x64 bytes long.
+// this is done so eePe can find the splash screen and replace it if need be.
+
+/*const prog_uchar APM s9xsplashMarker[] = {
+"Splash"
+};*/
+
+#endif // SPLASHMARKER_H
+
+-> menus.cpp
+replace
+
+-> er9x.cpp
+replace
+
+4.)install WinAvr
+run cmd
+cd /d "path to src dir"
+run Build.bat
+
+5.)flash er9x-V977.hex, and er9x-V977only.eep

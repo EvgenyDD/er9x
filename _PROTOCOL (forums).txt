@@ -1,0 +1,145 @@
+Examples:
+Devo: required a few transmitters due to variations between the 6/8/10 (this is the 1st one we did, so we probably could have gotten by without it if we knew more)
+DSM: required multiple transmitters and multiple Rx to figure out the challenge/response
+J6Pro: only needed one transmitter
+Flysky: required multiple tx to determine robust txid and frequency hopping
+Hubsan: only needed one tx. A 2nd was used for confirmation though
+Frsky1/2: Only needed one tx (though it isn't actually done yet)
+Skyartec: Only needed one Tx -------------------------------------------------------
+
+1, RF with BK2423, pin VDD,CE,CSN,CLK,MOSI,MISO,IRQ,GND
+2, RF use : data pipe 0 , TX_ADDR with 5 byte, 2 byte CRC, 16 byte length , only TX mode, 250Kb/S( or 1MKb/S)
+3, Binding process
+Binding use 2.483GHz , 1MKb/S,
+Binding TX_ADDR: bind_address[5] = {"KNDZK"};
+
+Package 16 bytes:
+Byte 0 : 'K' ---0x4B
+Byte 1 : 'N' ---0x4E
+Byte 2 : 'D' ---0x44
+Byte 3 : 'Z' ---0x5A
+Byte 4 : 0x00
+Byte 5 : 0x07
+Byte 6 : 0x05
+Byte 7 : 0x04
+Byte 8 : 0x08
+Byte 9 : 0x18
+Byte10 : 0x2d
+Byte11 : 0x41
+Byte12 : 0x00
+Byte13 : 0x00
+Byte14 : 0x00
+Byte15 : 0x00 or 0x01 (Let RX recognize air rate, 0x00 => 250Kb/S, 0x01 => 1Mb/S
+
+binding info. send every 2ms within 2sec. then start to send working code.
+
+4, Working status
+Working frequency 0~3 : 2.408G, 2.424G, 2.445G, 2.465G ; please make sure air rate setting at binding
+
+byte15, use 250Kb/S or 1MKb/S.
+Working TX_ADDR: work_address[5] = {0x00,0x07,0x05,0x04,0x4b};
+
+data package format:(Length 16bytes)
+
+elevator
+aileron
+throttle
+rudder
+
+Byte 0 : Throttle ADC high byte 0 -- 1023 (form 0 to 1023 ??)
+Byte 1 : Throttle ADC low byte
+Byte 2 : Aileron ADC high byte 0 -- 512(middle) -- 1023
+Byte 3 : Aileron ADC low byte
+Byte 4 : Elevator ADC high byte 0 -- 512(middle) -- 1023
+Byte 5 : Elevator ADC low byte
+Byte 6 : Rudder ADC high byte 0 -- 512(middle) -- 1023
+Byte 7 : Rudder ADC low byte
+Byte 8 : Throttle trim 0 -- 200
+Byte 9 : Aileron trim 0 -- 100(middle) -- 200
+Byte10 : Elevator trim 0 -- 100(middle) -- 200
+Byte11 : Rudder trim 0 -- 100(middle) -- 200
+
+Byte12 :
+bit 0: DR , 0=DR / 1=DR
+bit 1: Throttle Hold , 0= Normal , 1= Hold active
+bit 2: 3D (Stunt?) 0= Normal , 1= 3D
+bit 3: reserved , all 0
+bit 4: reserved , all 0
+bit 5: reserved , all 0
+bit 6~7: Flight mode(Gyro setting), 00= 6G mode , 01= 3G mode
+
+Byte13 :
+bit 0: reserved , all 0
+bit 1: reserved , all 0
+bit 2~4: working frequency code 0,1,2,3 (ex: if using 2.408G, setting = 0)
+bit 2~4: working frequency package count 1,2,3,4
+
+Byte14~15 : reserved , all 0
+
+5, Hopping method:
+
+Change frequency every 10ms,every frequency send 4 package interval = 2ms , every package include
+frequency package counter (1,2,3,4),package counter count only sending times, it should be clear/reset
+when you change to next frequency.
+10ms frequency change and 2ms package sending time must very accuracy; you can use 2ms timer to interrupt
+transmission, change to next frequency when interrupt 5 times. 
+
+
+
+
+Byte12 :
+bit 0: DR , 0=DR high (stable) / 1=DR low (agility)
+
+
+bitbucket.com/rivig/deviation
+ kn_nrf24l01.c
+
+
+
+The code for KN protocol is accepted in the main Deviation repository. It was a true collaborative work, I just implemented it, but many people participated. Thanks to Ansheng I had early SPI traces which allowed me to resolve ambiguities in the documents. The documents were published in Chinese by KN itself, and generously translated by dc59. KN published them because of persuasion from James Chen of HiSky. I was able to verify how it all works together and tune it thanks to generous donation of V977 from Banggood facilitated by RCGroups' FyreSG and Banggood's Adam.
+
+
+
+DEVO 8/10:
+Gear SW: 3G mode(0) / 6G mode(1)
+AILE DR SW: DR High(0) / DR Low(1)
+FMode SW: Normal(0) / Idle(1) / Normal(2)
+RUDD DR SW: Normal(0) / HOLD(1)
+
+DEVO 7E:
+HOLD 0 : Normal
+HOLD 1 : HOLD
+FMODE 0 : Normal
+FMODE 1 : Idle
+Channel 5 DR default = DR High(Stable mode)
+Channel 8 3/6G default = 3G mode
+---->>>>>>
+hi there I used that model file at my heli with devo7e. but I have got some struggle on heli.
+First of all I have changed switch configuration for 6g -3d mode. I asigned left horizontal to virtual 1 then I asigned virtual 1 to channel 8 "src=" to make it toggle switch. but when I change the mode to 6g heli strikes to a direction. Actually I can solve this problem with orginal tx with hover debug button. but I couldnt figure out it with devo 7e
+
+
+* I soldered in the NRF24L01 module
+* I used DFuSe to install the nightly build (saving my old files first)
+* I put my tx.ini and models directory back on the tx
+* I edited both the tx.ini and the hardware.ini to enable the module - use Notepad++ not Notepad to edit the files. Remove the semicolons in hardware.ini. If your KN protocol has an asterisk when you create a new model, something isn't right. I had that problem when I hadn't edited hardware.ini. I'm not sure if both files need to be edited but I did both, removing the semicolons in the hardware.ini and setting to the following in hardware.ini:
+
+
+----------------------------------------
+Got my V977 today. I tried ini file posted in this thread. Looks like that file by default runs V977 in 3 axis mode. Since I have 2x2 switches in my 7e I added settings to control channels 5 and 8 with these switches. Now I can select between 3-axis and 6-axis mode. This is my first CP heli so any attempts at flying in 3 axis mode ended very quickly. In 6 axis it is flyable at my skill level but very touchy. All rates are 100% and I'm not sure how to alter them. I tried adding rates and expos to original ini file but that did not seem to work as expected. I'll have to tinker with my settings some more.
+
+One thing I could use some help with is that even in "4-channel compatible" 6 axis mode where motor starts spinning from the bottom position and accelerates as you increase throttle - the blade pitch remains negative until I hit 50% throttle. Then it becomes positive and heli takes off. I was expecting that in this mode pitch would be positive at minimum (negative 100%) stick and throughout the entire range and the motor RPM would control altitude just like with V911.
+
+Overall excellent heli! I love brushless! I wish price of V930 was closer to V911 than to V977. I'd replace my V911s with V930s. 
+
+
+
+
+FX071C works with my devo 7e. We have to set it up as 8 CH although 071 is a FP so as to carry the mapping into the flags correctly.
+
+CH 5 D/R (does not seem to be functional on FX071C)
+CH 6 TH
+CH 7 Idle up (not used for FP.
+CH 8 ACC switch.
+
+
+Mine will only enter 3D mode (Idle up) when you are in 3 axis mode. If you're in 6 axis mode, the idle up switch won't do anything 

@@ -24,7 +24,7 @@
 #else
  #define LCD_MINCONTRAST 10
  #define LCD_MAXCONTRAST 45
- #define LCD_NOMCONTRAST 25
+ #define LCD_NOMCONTRAST 33
 #endif
 
 
