@@ -1,0 +1,20 @@
+Channel 1 - throttle
+Channel 2 - aileron
+Channel 3 - elevator
+Channel 4 - rudder
+Channel 5 - DR (-100 disabled | +100 enabled)
+Channel 6 - Throttle HOLD (-100 disabled | +100 enabled)
+Channel 7 - 3D (Stunt?) (-100 disabled | +100 enabled) - works only in 3G mode
+Channel 8 - Flight mode(Gyro setting) (-100 = 6G mode (simple) | +100 = 3G mode (advanced))
+
+er9x-V977only.eep:
+Throttle Hold - Throttle Hold
+Gear - DR(v977)
+Rud. DR - DR(Turnigy 9x)
+Ele. DR - DR(Turnigy 9x)
+AIL. DR - DR(Turnigy 9x)
+3pos. SW:
+N - 6G
+1 - 3G + 3D disabled
+2 - 3G + 3D enabled
+ 
